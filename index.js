@@ -54,6 +54,7 @@ function isValidHttpUrl(string) {
 
 // Your first API endpoint
 app.get('/api/hello', function(req, res) {
+  console.log("hi")
   res.json({ greeting: 'hello API' });
 });
 
@@ -68,11 +69,17 @@ app.post('/api/shorturl', async (req, res) => {
 })
 
 app.get('/api/shorturl/:url', async (req, res) => {
-  const url = await UrlModel.find({short_url: parseInt(req.params.url)})
-  if(url) {
-    res.redirect(url.original_url)
+  const shortUrl = Number(req.params.url);
+  if(shortUrl) {
+      const url = await UrlModel.findOne({short_url: shortUrl})
+      console.log(url)
+    if(url) {
+      res.redirect(url.original_url)
+    }else {
+      res.json({ error: 'No short URL found for the given input' })
+    }
   }else {
-    res.json({ error: 'No short URL found for the given input' })
+      res.json({ error: 'Wrong format' })
   }
 })
 
